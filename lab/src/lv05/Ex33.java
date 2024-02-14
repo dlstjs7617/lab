@@ -33,9 +33,9 @@ public class Ex33 {
 		}
 		
 		int itemCnt = 0;
-		boolean win = false;
+		
 		while(true) {
-			boolean itemGet = false;
+			
 			while(itemCnt == 0) {
 				int yIdx = ran.nextInt(SIZE);
 				int xIdx = ran.nextInt(SIZE);
@@ -63,12 +63,6 @@ public class Ex33 {
 			}
 			System.out.println();
 			
-			if(snake == SIZE*SIZE) {
-				win = true;
-				break;
-			}
-			
-			
 			System.out.print("a)left d)right w)up s)down : ");
 			int sel = sc.next().charAt(0);
 			
@@ -87,59 +81,28 @@ public class Ex33 {
 				moveY++;
 			}
 			
-			if(moveY < 0 || moveY >= SIZE || moveX < 0 || moveX >= SIZE ||(map[moveY][moveX] != 0 && map[moveY][moveX] != ITEM))
-				break;
-			
+			if(moveY < 0 || moveY >= SIZE || moveX < 0 || moveX >= SIZE)
+				continue;
 			if(map[moveY][moveX] == ITEM) {
 				itemCnt--;
-				itemGet = true;
-				
-			}
-			
-			// 뱀지우기
-			for(int i=0; i<SIZE; i++){
-				for(int j=0; j<SIZE; j++){
-					if(map[i][j] != 0 && map[i][j] != ITEM)
-						map[i][j] = 0;
-				}
-			}
-			
-			int[] tempY = y;
-			int[] tempX = x;
-			
-			if(itemGet) {
-				y = new int[snake+1];
-				x = new int[snake+1];
+				int[] tempY = y;
+				int[] tempX = x;
 				
 				for(int i=0; i<snake; i++) {
-					y[i+1] = tempY[i];
-					x[i+1] = tempX[i];
+					y[i] = tempY[i];
+					x[i] = tempX[i];
 				}
 				
+				y[snake+1] = y[snake];
+				x[snake+1] = x[snake];
 				snake++;
-			}else {
-				y = new int[snake];
-				x = new int[snake];
-				
-				for(int i=0; i<snake-1; i++) {
-					y[i+1] = tempY[i];
-					x[i+1] = tempX[i];
-				}
 			}
 			
-			y[0] = moveY;
-			x[0] = moveX;
 			
-			//뱀그리기
-			for(int i=0; i<snake; i++) {
-				map[y[i]][x[i]] = i+1; 
-			}
 			
-		}
-		if(win) {
-			System.out.println("GAME CLEAR");
-		}else {
-			System.out.println("GAME OVER");
+			map[moveY][moveX] = 1;
+			
+			
 		}
 		
 	}

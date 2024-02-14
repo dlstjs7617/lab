@@ -295,7 +295,6 @@ public class Ex31_t {
 						else
 							map[bY][bX] = BALL;
 						
-						map[bY][bX] = BALL;
 					}
 					if(map[y][x] != GOAL)
 						map[y][x] =0;
