@@ -1,4 +1,4 @@
-package partice;
+package parctice;
 
 import java.util.Random;
 import java.util.Scanner;
