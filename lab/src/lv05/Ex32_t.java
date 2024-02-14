@@ -107,6 +107,7 @@ public class Ex32_t {
 				System.out.println("문장의 끝에 .마침표를 붙이면 종료");
 								
 				String content = "";
+				
 				while(true) {
 					String line = sc.nextLine();
 					content += line + "<br>";
