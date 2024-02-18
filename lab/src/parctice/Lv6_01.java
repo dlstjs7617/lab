@@ -110,8 +110,6 @@ class OneToEighteen_Parctice{
 				System.err.println("유효하지않은 범위");
 				continue;
 			}
-			
-			
 			answer(index);
 			
 		}
