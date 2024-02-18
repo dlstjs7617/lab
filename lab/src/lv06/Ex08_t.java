@@ -35,25 +35,25 @@ class OneToEighteen_t{
 	void setMapArray(int[] array, int start, int end) {
 		
 	}
-	
-	
-	void setMap() {
-		setMapArray(front, start, end);		// front 초기화
-		setMapArray(back, start, end);		// back 초기화
-	}
-	
-	
-	void run() {
-		// set map
-		setMap();
-		while(getIsRun()) {
-			// print map
-			   printMap();
-			   int idx = inputIndex();
-			   flipCard(idx);
-		}
-		printResult();
-	}
+//	
+//	
+//	void setMap() {
+//		setMapArray(front, start, end);		// front 초기화
+//		setMapArray(back, start, end);		// back 초기화
+//	}
+//	
+//	
+//	void run() {
+//		// set map
+//		setMap();
+//		while(getIsRun()) {
+//			// print map
+//			   printMap();
+//			   int idx = inputIndex();
+//			   flipCard(idx);
+//		}
+//		printResult();
+//	}
 }
 
 
@@ -63,7 +63,7 @@ public class Ex08_t {
 	public static void main(String[] args) {
 		
 		OneToEighteen_t game = new OneToEighteen_t();
-		game.run();
+//		game.run();
 	}
 
 }
