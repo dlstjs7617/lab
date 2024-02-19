@@ -18,7 +18,7 @@ class OneToEighteen_t{
 	Scanner sc = new Scanner(System.in);
 	
 	final int SIZE = 9;
-	
+	int gameNum;
 	int[] front = new int[SIZE];
 	int[] back = new int[SIZE];
 	
@@ -26,34 +26,87 @@ class OneToEighteen_t{
 	// ㄴ 코드 조각을 재사용할 수 있는 장점
 	
 	void shuffle(int[] array) {
+		Random ran = new Random();
 		
+		for(int i=0; i<array.length *10; i++) {
+			int rIdx = ran.nextInt(array.length);
+			
+			int temp = array[0];
+			array[0] = array[rIdx];
+			array[rIdx] = temp;
+		}
 	}
 	
-	// array : 초기화 할 대상 배열
-	// start : 초기화 할 시작 값
-	// end :  초기화 할 마지막 값
-	void setMapArray(int[] array, int start, int end) {
+	void setMapArray(int[] array, int start) {
+		for(int i=0; i<array.length; i++) {
+			array[i] = start + i;
+		}
 		
+		shuffle(array);
 	}
-//	
-//	
-//	void setMap() {
-//		setMapArray(front, start, end);		// front 초기화
-//		setMapArray(back, start, end);		// back 초기화
-//	}
-//	
-//	
-//	void run() {
-//		// set map
-//		setMap();
-//		while(getIsRun()) {
-//			// print map
-//			   printMap();
-//			   int idx = inputIndex();
-//			   flipCard(idx);
-//		}
-//		printResult();
-//	}
+	
+	
+	void setMap() {
+		gameNum = 1;
+		setMapArray(front, 1);		// front 초기화
+		setMapArray(back, SIZE+1);		// back 초기화
+	}
+	
+	void printMap() {
+		for(int i=0; i<SIZE; i++) {
+			System.out.printf("%2d " , front[i]);
+			
+			if(i%3 == 2) {
+				System.out.println();
+			}
+		}
+	}
+	
+	boolean isRun() {
+		return gameNum > SIZE*2 ? false : true;
+	}
+	
+	int inputIndex() {
+		System.out.print("index : ");
+		int index = -1;
+		
+		try {
+			String input = sc.next();
+			index = Integer.parseInt(input);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return index;
+	}
+	
+	void flipCard(int index) {
+		if(index < 0 || index >= SIZE)
+			return; // 메소드 소멸
+		
+		if(front[index] == gameNum) {
+			front[index] = back[index];
+			back[index] = 0;
+			gameNum++;
+		}
+	}
+	
+	void printResult() {
+		System.out.println("GAME CLEAR!");
+	}
+	
+	void run() {
+		// set map
+		setMap();
+		while(isRun()) {
+			// print map
+			   printMap();
+			   int idx = inputIndex();
+			   flipCard(idx);
+		}
+		printResult();
+	}
 }
 
 
@@ -63,7 +116,7 @@ public class Ex08_t {
 	public static void main(String[] args) {
 		
 		OneToEighteen_t game = new OneToEighteen_t();
-//		game.run();
+		game.run();
 	}
 
 }

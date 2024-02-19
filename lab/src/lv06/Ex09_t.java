@@ -6,7 +6,7 @@ package lv06;
 import java.util.Random;
 import java.util.Scanner;
 
-class Ladder{
+class Ladder_t{
 	
 	Scanner sc = new Scanner(System.in);
 	
@@ -123,50 +123,43 @@ class Ladder{
 			System.out.print(isOpen[i] ? "0 " : "X ");
 		System.out.println();
 	}
-	boolean numExcetion(int num) {
-		if(num < 0 || num >= player) {
-			System.out.println("유효하지않는값");
-			return true;
-		}
-		return false;
-	}
 	
 	void play(int number) {
+		// 예외처리 후,
+		if(number < 1 || number > player)
+			return;
+		// 결과 출력(처리)
+		int x = number-1;
 		
-		for(int i=0; i<ladder.length; i++) {
-			int cnt = 0;
-			for(int j=0; j<player; j++) {
-				if(number > j && ladder[i][j] == 1) {
-					cnt++;
+		for(int y=0; y<HEIGHT; y++) {
+			if(ladder[y][x] == HOOK) {
+				int cnt = 0;
+				for(int i=0; i<x; i++) {
+					if(ladder[y][i] == HOOK)
+						cnt++;
 				}
-			}
-			if(ladder[i][number] == 1 && cnt != 0) {
 				if(cnt % 2 == 0) {
-					number++;
+					x ++;
 				}else {
-					number--;
+					x --;
 				}
 			}
 		}
-		// 예외처리 후,
-		// 결과 출력(처리)
+		
+		if(!isOpen[x]) {
+			System.out.printf("결과 : %s 당첨 \n", menu[x]);
+			isOpen[x] = true;
+		}else
+			System.out.println("이미 고른 번호입니다.");
 	}
-	void playResult(int number) {
-		System.out.print("당첨 : " + menu[number] + " \n");
-		isOpen[number] = true;
-	}
+	
 	
 	void run() {
 		setGame();
 		while(isRun()) {
 			printLadder();
 			int num = inputNumber();
-			if(numExcetion(num)) {
-				continue;
-			}
-			
 			play(num);
-			playResult(num);
 		}
 	}
 	
@@ -175,12 +168,12 @@ class Ladder{
 
 
 
-public class Ex09 {
+public class Ex09_t {
 
 	public static void main(String[] args) {
 		
-		Ladder Ladder = new Ladder();
-		Ladder.run();
+		Ladder_t Ladder_t = new Ladder_t();
+		Ladder_t.run();
 	}
 
 }
