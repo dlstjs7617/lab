@@ -88,7 +88,15 @@ class Atm{
 	}
 	
 	void vectorMinus(int acc, String pw) {
+		int[] tmpAccs = accs;
+		String[] tmpNames = names;
+		String[] tmpPws = pws;
+		int[] tmpMoneys = moneys;
 		
+		accs = new int[size-1];
+		names = new String[size-1];
+		pws = new String[size-1];
+		moneys = new int[size-1];
 	}
 	
 	void leave() {
