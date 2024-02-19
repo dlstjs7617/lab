@@ -10,7 +10,7 @@ package lv06;
 // System.out.println("6.이체하기");
 // System.out.println("7.조회하기");
 
-class atm{
+class Atm_t{
 	
 	String name;
 	
@@ -23,9 +23,8 @@ class atm{
 public class Ex10_t {
 
 	public static void main(String[] args) {
-		atm atm = new atm();
-		atm.run();
-		
+		Atm_t Atm_t = new Atm_t();
+		Atm_t.run();
 	}
 
 }
