@@ -84,7 +84,7 @@ class Marble{
 	
 	void playerMove(int move) {
 		int run = move;
-		while(run > 0) {
+		while(run != 0) {
 			System.out.println("x : "+ x);
 			System.out.println("run : "+ run);
 			System.out.println("dir : " + dir);
@@ -106,11 +106,11 @@ class Marble{
 	
 	int rightMove(int move) {
 		map[y][x] = 0;
-		if(x + move >= SIZE) {
-			move -= SIZE-x;
+		if(x + move > SIZE-1) {
+			move -= (SIZE-1)-x;
 			x = SIZE-1;
 			dir = DOWN;
-		}else if(x + move <SIZE) {
+		}else{
 			x += move;
 			move = 0;
 		}
@@ -120,11 +120,11 @@ class Marble{
 	
 	int downMove(int move) {
 		map[y][x] = 0;
-		if(y + move >= SIZE) {
-			move -= SIZE-y;
+		if(y + move > SIZE-1) {
+			move -= (SIZE-1)-y;
 			y = SIZE-1;
 			dir = LEFT;
-		}else if(y + move <SIZE) {
+		}else{
 			y += move;
 			move = 0;
 		}
@@ -139,7 +139,7 @@ class Marble{
 			move -= x;
 			x = 0;
 			dir = UP;
-		}else if(x - move < 0) {
+		}else {
 			x -= move;
 			move = 0;
 		}
@@ -154,7 +154,7 @@ class Marble{
 			move -= y;
 			y = 0;
 			dir = LEFT;
-		}else if(x - move < 0) {
+		}else {
 			y -= move;
 			move = 0;
 		}
