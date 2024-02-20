@@ -87,7 +87,7 @@ class Atm{
 		moneys[size] += 1000;
 	}
 	
-	void vectorMinus(int acc, String pw) {
+	void vectorMinus(String pw) {
 		int[] tmpAccs = accs;
 		String[] tmpNames = names;
 		String[] tmpPws = pws;
@@ -97,10 +97,26 @@ class Atm{
 		names = new String[size-1];
 		pws = new String[size-1];
 		moneys = new int[size-1];
+		
 	}
 	
+//	boolean pwCheck(String pw) {
+//		for(int i=0; i<pws.length; i++) {
+//			if(pws[i].equals(pw))
+//				return true;
+//			else
+//				return false;
+//		}
+//	}
+	
 	void leave() {
-		
+		System.out.println("비밀번호 입력:");
+		String pw = sc.next();
+//		if(pwCheck(pw)) {
+//			System.out.println("회원 탈퇴 완료");
+//		}else{
+//			System.out.println("비밀번호 불일치");
+//		}
 	}
 	void login() {
 		
