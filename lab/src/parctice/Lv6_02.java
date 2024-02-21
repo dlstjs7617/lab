@@ -3,165 +3,199 @@ package parctice;
 import java.util.Random;
 import java.util.Scanner;
 
-class LadderTeacher {
+/*
+ * # 사다리 게임(N플레이어)
+ */
+class ParcticeLadder{
+	
 	Scanner sc = new Scanner(System.in);
-
+	
+	
 	final int HOOK = 1;
-	final int SIZE = 9;
-
-	int player; // 플레이어 수
-	int ladder[][]; // null
-	String[] menu; // null
-
+	final int HEIGHT = 9;
+	
+	int player;			//플레이어 수
+	int ladder[][];
 	boolean[] isHook;
 	boolean[] isOpen;
-
-	int inputNumber() {		
-		int number = -1;
+	String[] menu;
+	
+	void playerSet() {
+		while(player < 2) {
+			System.out.print("인원");
+			player = inputNumber();			
+		}
+	}
+	
+	void menuSet() {
+		menu = new String[player];
+		for(int i=0; i<player; i++) {
+			menu[i] = inputString(i);
+		}
+	}
+	
+	String inputString(int i) {
+		System.out.printf("%d 번째 메뉴 : ", i+1);
+		String menu = sc.next();
 		
-		try {
-			System.out.print("number : ");
-			String input = sc.next();
-
-			number = Integer.parseInt(input);
-
-		} catch (Exception e) {
-			System.err.println("입력값은 숫자만 허용합니다.");
-		}
-
-		return number;
+		return menu;
 	}
-
-	void setPlayer() {
-		while (player < 2) {
-			System.out.print("Player");
-			player = inputNumber();
-		}
+	
+	void setGame() {
+		playerSet();
+		isOpen = new boolean[player];
+		ladder = new int[HEIGHT][player];
+		menuSet();
+		setLadder();
+		
 	}
-
+	
 	void setLadder() {
+		while(true) {
+			ranHook();
+			
+			if(hookCheck()) {
+				break;
+			}else {
+				resetLadder();
+			}
+		}
+	}
+	
+	void ranHook() {
 		Random ran = new Random();
-
-		ladder = new int[SIZE][player];
-		isHook = new boolean[player];
-
-		for (int i = 0; i < SIZE; i++) {
-			for (int j = 0; j < player - 1; j++) {
-				// 왼쪽 후크
-				ladder[i][j] = ran.nextInt(3) == HOOK ? HOOK : 0;
-
-				if (ladder[i][j] == HOOK) {
-					isHook[j] = true;
-					ladder[i][++j] = HOOK; // 후크 달리면 오른쪽도 걸기
+		for(int i=0; i<HEIGHT; i++) {
+			for(int j=0; j<player-1; j++) {
+				int rNum = ran.nextInt(3);
+				
+				if(rNum == 2) {
+					ladder[i][j] = HOOK;
+					ladder[i][++j] = HOOK;
 				}
 			}
-
-			if (i == SIZE - 1) {
-				for (int j = 0; j < player-1; j++)
-					if (!isHook[j]) {
-						ladder = new int[SIZE][player];
-						isHook = new boolean[player];
-						i = -1;
-						break;
-					}
+		}
+	}
+	
+	boolean hookCheck() {
+		boolean result = true;
+		isHook = new boolean[player];
+		for(int i=0; i<player; i++	) {
+			int cnt = 0;
+			for(int j=0; j<HEIGHT; j++) {
+				if(ladder[j][i] == HOOK) {
+					isHook[i] = true;
+				}
 			}
 		}
+		
+		return result;
 	}
-
-	void setResult() {
-		menu = new String[player];
-		isOpen = new boolean[player];
-
-		for (int i = 0; i < player; i++) {
-			System.out.printf("%d menu : ", i + 1);
-			menu[i] = sc.next();
+	
+	void resetLadder() {
+		ladder = new int[HEIGHT][player];
+	}
+	
+	
+	
+	
+	
+	int inputNumber() {
+		int input = 0;
+		
+		try {
+			System.out.print("입력 : ");
+			String num = sc.next();
+			input = Integer.parseInt(num);
+			
+		} catch (Exception e) {
+			System.out.println("숫자만 입력");
 		}
+		
+		return input;
 	}
-
-	void setGame() {
-		setPlayer();
-		setLadder();
-		setResult();
-	}
-
+	
 	boolean isRun() {
-		boolean isEnd = true;
-
-		for (int i = 0; i < player; i++) {
-			if (!isOpen[i])
-				isEnd = false;
+		boolean run = false;
+		
+		for(int i=0; i<player; i++) {
+			if(!isOpen[i]) {
+				run = true;
+			}			
 		}
-		return !isEnd;
+		
+		
+		return run;
 	}
-
+	
 	void printLadder() {
-		for (int i = 0; i < player; i++) {
-			System.out.print(i + 1 + " ");
+		for(int i=0; i<player; i++) {
+			System.out.printf("%d ", i);
 		}
 		System.out.println();
-
-		for (int i = 0; i < SIZE; i++) {
-			for (int j = 0; j < player; j++) {
-				if (ladder[i][j] == HOOK) {
+		for(int i=0; i<HEIGHT; i++) {
+			for(int j=0; j<player; j++) {
+				if(ladder[i][j] == HOOK) {
 					System.out.print("├─┤ ");
 					j++;
-				} else
+				}else
 					System.out.print("│ ");
 			}
 			System.out.println();
 		}
-
-		for (int i = 0; i < player; i++)
-			System.out.print(isOpen[i] ? "O " : "X ");
+		
+		for(int i=0; i<player; i++) {
+			if(isOpen[i] == false) {
+				System.out.print("X ");				
+			}else {
+				System.out.print("O ");
+			}
+		}
 		System.out.println();
 	}
-
-	void play(int number) {
-		// 예외처리 후,
-		if (number >= 0 || number < SIZE) {
-			int hookCnt = 0;
-
-			for (int i = 0; i < SIZE; i++) {
-				for (int j = 0; j < player; j++) {
-					if (ladder[0][number] == ladder[i][j]) {
-						if (ladder[i][j] == HOOK) {
-							hookCnt++;
-						}
-						if (hookCnt % 2 == 0)
-							j++;
-						else if (hookCnt % 2 == 1)
-							j--;
-					}
+	
+	void open(int line) {
+		int x = line;
+		
+		for(int i=0; i<HEIGHT; i++) {
+			int cnt = 0;
+			for(int j=0; j<player; j++) {
+				if(j < x && ladder[i][j] == HOOK) {
+					cnt++;
 				}
 			}
-			
-			// 결과 출력 (처리)
-			if (isOpen[number]) {
-				System.out.println("이미 고른 메뉴입니다.");
-			} else {
-				System.out.printf("%s 메뉴 당첨 !\n", menu[number]);
-				isOpen[number] = true;
+			if(cnt == 0) {
+				x = x;
+			}else if(cnt != 0) {
+				x = cnt%2 == 1 ? --x : ++x ;
 			}
+			
 		}
+		
+		isOpen[x] = true;
+		System.out.printf("메뉴 : %s  당첨\n", menu[x]);
 	}
-
+	
+	
+	
 	void run() {
 		setGame();
-		while (isRun()) {
+		
+		while(isRun()) {
 			printLadder();
-			int num = inputNumber();
-			play(num);
+			int line = inputNumber();
+			open(line);
 		}
 	}
-
 }
+
+
 
 public class Lv6_02 {
 
 	public static void main(String[] args) {
-		LadderTeacher ladderTeacher = new LadderTeacher();
-		ladderTeacher.run();
-
+		ParcticeLadder game = new ParcticeLadder();
+		
+		game.run();
 	}
 
 }
