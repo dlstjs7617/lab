@@ -1,4 +1,4 @@
-package test.lv6;
+package parctice;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -39,63 +39,27 @@ class MiniTetris {
 		}
 		
 		dataArr = new String[yCnt][xCnt];
-		xCnt = 0;
-		yCnt = 0;
-		String[] dataSplit = data.split("\n|,");
-		for(int i=0; i<dataSplit.length; i++) {
-			dataArr[yCnt][xCnt++] = dataSplit[i];
-			if(xCnt == dataArr[yCnt].length) {
-				yCnt++;
-				xCnt = 0;
-			}
-		}
+		
+		inputArr(data);
+		
 				
 	}
 	
-	boolean checkBlock(int tempY , int tempX , int blockLength) {
-		boolean one = false;
-		if(tempX+blockLength > dataArr[tempY].length) {
-			System.out.println("벽을 넘어갑니다.");
-			one = true;
-		}
-		
-		for(int j=tempX; j<blockLength+tempX; j++) {
-			if(dataArr[tempY][j].equals("1") && Integer.parseInt(dataArr[tempY][j]) == 1) {
-				System.out.println("복사할수 없는 자리입니다.");
-				one = true;
+	void inputArr(String data) {
+		int y = 0;
+		int x = 0;
+		String[] dataSplit = data.split("\n|,");
+		for(int i=0; i<dataSplit.length; i++) {
+			dataArr[y][x++] = dataSplit[i];
+			if(x == dataArr[y].length) {
+				y++;
+				x = 0;
 			}
 		}
-		
-		
-		return one;
 	}
 	
-	void setTetris(int y , int x , String block) {
-		int tempY = y;
-		int tempX = x;
-		String[] blockArr = block.split(",|\n");
-		int blockLength = blockArr.length;
-		if(checkBlock(tempY,tempX,blockLength)) {
-			return;
-		}
+	void block() {
 		
-		resultDataArr(tempY , tempX , block); 
-		
-	}
-	
-	void resultDataArr(int tempY,int tempX , String block) {
-		int y= tempY;
-		int x= tempX;
-		String[] tempBlock = block.split(",");
-		int cnt = 0;
-		for(int i=0; i<tempBlock.length; i++) {
-			if(tempBlock[i].equals('\n'))
-				cnt++;
-		}
-		System.out.println(cnt);
-		for(int i=0; i<tempBlock.length; i++) {
-			dataArr[y][x++] = tempBlock[i]; 
-		}
 	}
 	
 	String setResult() {
@@ -113,15 +77,15 @@ class MiniTetris {
 		return result;
 	}
 	
+	
+	
 	String run(String data , String block) {
 		setData(data);
 		
 		int y = inputNumber();
 		int x = inputNumber();
-		
-		setTetris(y, x, block);
+
 		String returnData = setResult();
-		
 		return returnData;
 	}
 }
