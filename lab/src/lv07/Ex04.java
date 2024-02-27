@@ -42,7 +42,7 @@ class Racing{
 	
 	int[][] racing;
 	
-	Horse[] hores;
+	Horse[] horse;
 	
 	// 게임 초기화
 	void setGame(){
@@ -60,10 +60,10 @@ class Racing{
 	
 	// 경주말 초기화
 	void setHorse() {
-		hores = new Horse[horseNum];
+		horse = new Horse[horseNum];
 		
 		for(int i=0; i<horseNum; i++) {
-			hores[i] = new Horse(i+1, 0);			
+			horse[i] = new Horse(i+1, 0);			
 		}
 	}
 	
@@ -80,7 +80,7 @@ class Racing{
 		System.out.println("================ 경마장 ===============");
 		for(int i=0; i<horseNum; i++) {
 			for(int j=0; j<SIZE; j++) {
-				if(hores[i].location == j)
+				if(horse[i].location == j)
 					System.out.print("🐎");
 				else
 					System.out.print("〓");
@@ -93,35 +93,26 @@ class Racing{
 	// 말달리자
 	void horseRun() {
 		
+		boolean end = false;
 		for(int i=0; i<horseNum; i++) {
-			boolean end = false;
+			int rNum = ran.nextInt(3);
 			
-			int runRan = ran.nextInt(4);
-			
-			if(hores[i].rank != 0)
+			if(horse[i].rank != 0)
 				continue;
 			
-			if(hores[i].location < SIZE) {
-				hores[i].location += runRan;
-			}
-			
-			if(end && hores[i].location >= SIZE) {
-				hores[i].location -= runRan;
-				continue;
-			}
-			
-			
-			
-			if(hores[i].location >= SIZE) {
+			if(horse[i].location + rNum < SIZE-1)
+				horse[i].location += rNum;
+			else if(!end && horse[i].location + rNum >= SIZE-1) {
 				end = true;
-				hores[i] = new Horse(i+1, SIZE-1, rankCnt++);
+				horse[i] = new Horse(i+1, SIZE-1, rankCnt++);
 			}
+			
 		}
 	}
 	
 	void slowGame() {
 		try {
-			Thread.sleep(300);
+			Thread.sleep(400);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -130,7 +121,7 @@ class Racing{
 	void printRank() {
 		printRacing();
 		for(int i=0; i<horseNum; i++) {
-			System.out.printf("%d번말 %d등  \n",hores[i].number, hores[i].rank);
+			System.out.printf("%d번말 %d등  \n",horse[i].number, horse[i].rank);
 		}
 	}
 	
