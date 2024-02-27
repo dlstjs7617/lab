@@ -6,13 +6,18 @@ import java.util.Scanner;
 class Person{
 	String name, id, password, email;
 	int age, gender;
-	
-	void printInfo() {
-		System.out.printf("이름 : %s \n id : %s \n 비밀번호 : %s \n"
-				+ "이메일 : %s \n 나이 : %d \n 성별 : %d \n"
-				,name,id,password,email,age,gender);
-		System.out.printf("%s/%s(%s, %s) %d세, %s\n",id, password, name, email, age, gender == 1 ? "남자" : "여자");
-	}
+//	
+//	void printInfo() {
+//		System.out.printf("이름 : %s \n id : %s \n 비밀번호 : %s \n"
+//				+ "이메일 : %s \n 나이 : %d \n 성별 : %d \n"
+//				,name,id,password,email,age,gender);
+//		System.out.printf("%s/%s(%s, %s) %d세, %s\n",id, password, name, email, age, gender == 1 ? "남자" : "여자");
+//	}
+//	
+	@Override
+	   public String toString() {
+	      return String.format("%s/%s(%s, %s) %d세, %s\n", id, password, name, email, age, gender == 1 ? "남자" : "여자");
+}
 }
 
 class CMS {
@@ -25,14 +30,17 @@ class CMS {
 	final int RESET_PASSWORD = 5;
 	final int VIEW_USER = 6;
 	
+	final int SEARCH_USER = 1;
+	final int SEARCH_USER_ALL = 2;
+	int log =-1;
 	int size;
 	Person[] group;
 	
 	Person createUser() {		
-		String name = inputStirng("name");
-		String id = inputStirng("id");
-		String email = inputStirng("email");
-		String password = inputStirng("password");
+		String name = inputString("name");
+		String id = inputString("id");
+		String email = inputString("email");
+		String password = inputString("password");
 		int age = inputNumber("age");
 		int gender = inputNumber("1)남자 2)여자 ");
 		
@@ -47,53 +55,147 @@ class CMS {
 		return person;
 	}
 	
-	boolean isDuplicationUserId(String id) {
+	int searchUserById(String id) {
 		for(int i=0; i<size; i++) {
 			Person user = group[i];
 			
-			if(group[i].id.equals(id))
-				return true;
+			if(user.id.equals(id))
+				return i;
 		}
-		
-		return false;
+		return -1;
 	}
 	
 	void join() {
 		Person user = createUser();
 	
 		// id 중복 예외처리
-		if(isDuplicationUserId(user.id)) {
+		if(searchUserById(user.id) != -1) {
 			System.err.println("중복되는 아이디입니다.");
 			return;
 		}
 		// group 배열의 크기를 늘리고
 		// 기존 값을 옮겨오고
 		
-//		Person[] temp = size == 0 ? null group.clone();
+
+		Person[] temp = size == 0 ? null : group.clone();
 		group = new Person[size + 1];
+		
+		for(int i=0; i<size; i++) {
+			group[i] = temp[i];
+		}
 		// 마지막 인덱스에 새로운 Person 객체를 추가
+		// 	group[size] : null -> new Person();
+		group[size++] = user;
+		System.out.println("회원가입 완료");
 	}
 	
 	void runMenu(int select) {
-		if(select == JOIN)
+		if(select == JOIN && !isLogin())
 			join();
-//		else if(select == LEAVE)
-//			leave();
-//		else if(select == LOG_IN)
-//			login();
-//		else if(select == LOG_OUT)
-//			logout();
-//		else if(select == RESET_PASSWORD)
-//			resetPassword();
-//		else if(select == VIEW_USER) {
-//			printSubMenu();
-//			int sel = inputNumber();
-//			runSubMenu(sel);
-//		}
+		else if(select == LEAVE && isLogin())
+			leave();
+		else if(select == LOG_IN && !isLogin())
+			login();
+		else if(select == LOG_OUT)
+			logout();
+		else if(select == RESET_PASSWORD && isLogin())
+			resetPassword();
+		else if(select == VIEW_USER) {
+			printSubMenu();
+			int sel = inputNumber("메뉴");
+			runSubMenu(sel);
+		}
+	}
+	
+	void resetPassword() {
+		String password = inputString("현재 비밀번호");
+		String newPassword = inputString("새 비밀번호");
+		
+		if(group[log].password.equals(password)) {
+			group[log].password = newPassword;
+			System.out.println("비밀번호 변경 완료");
+		}else {
+			System.err.println("비밀번호가 불일치합니다.");
+		}
+		
+	}
+	
+	boolean isLogin() {
+		return log == -1 ? false : true;
+	}
+	
+	void leave() {
+		String password = inputString("password");
+		
+		if(group[log].password.equals(password)) {
+			Person[] temp = group.clone();
+			group = new Person[size-1];
+			
+			int idx = 0;
+			for(int i=0; i<size; i++)
+				if(i != log)
+					group[idx++] = temp[i];
+			
+			size--;
+			
+			logout();
+		}else {
+			System.err.println("패스워드가 불일치 합니다.");
+		}
+	}
+	
+	void login() {
+		String id = inputString("id");
+		String password = inputString("password");
+
+		int idx = searchUserById(id);
+		
+		if(idx != -1 && group[idx].password.equals(password))
+			log = idx;
+		
+		if(log == -1)
+			System.err.println("회원정보를 다시 확인 해주세요.");
+	}
+	
+	void logout() {
+		log = -1;
+		System.out.println("로그아웃 완료");
+	}
+	
+	void printUserInfo() {
+		String id = inputString("id");
+		int idx = searchUserById(id);
+		if(idx != -1)
+			System.out.println(group[idx]);
+		else
+			System.err.println("존재하지 않는 회원입니다.");
+	}
+	
+	void runSubMenu(int select) {
+		if(select == SEARCH_USER) {
+			printUserInfo();
+		}else if(select == SEARCH_USER_ALL) {
+			printGroupInfo();
+		}
+		
+		
+	}
+	
+	void printGroupInfo() {
+		for(int i=0; i<size; i++) {
+			System.out.println("\n" + (i+1) + ".");
+			
+			System.out.println(group[i]);
+		}
 	}
 	
 	boolean isRun() {
 		return true;
+	}
+	
+	void printSubMenu() {
+		System.out.println("1)회원조회");
+		System.out.println("1)회원 전체 조회");
 	}
 	
 	void printMenu() {
@@ -108,7 +210,7 @@ class CMS {
 	}
 	
 
-	String inputStirng(String message) {
+	String inputString(String message) {
 		System.out.print(message + " : ");
 		return sc.next();
 	}
