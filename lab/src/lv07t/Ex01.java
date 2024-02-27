@@ -69,7 +69,7 @@ class CMS {
 		// group 배열의 크기를 늘리고
 		// 기존 값을 옮겨오고
 		
-		Person[] temp = size == 0 ? null,group.clone();
+//		Person[] temp = size == 0 ? null group.clone();
 		group = new Person[size + 1];
 		// 마지막 인덱스에 새로운 Person 객체를 추가
 	}
