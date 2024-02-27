@@ -8,19 +8,21 @@ import java.util.Scanner;
 // 사용자(user), 좌석(seat), 시스템(tms)
 
 class User{
-	 Seat[] mySeats;
-	 
-	 
-	 
-	 String id;
-	 String password;
-	 String name; 
+	
+	Seat[] mySeats;
+	
+	int seatCnt = 0;
+
+	String id;
+	String password;
+	String name; 
 }
 
 class Seat{
-	boolean seat;
-	String seatName;
+	int idx;
+	int code;
 	
+	boolean seat;
 }
 
 class Tms{
@@ -28,7 +30,7 @@ class Tms{
 	Scanner sc = new Scanner(System.in);
 	
 	User[] users;
-	Seat[] cgv;
+	Seat[] seats;
 	
 	final int SELL = 1;
 	final int SIZE = 10;
@@ -43,24 +45,29 @@ class Tms{
 	int size;
 	int log = -1;
 	
+	
 	Seat seat = new Seat();
+	User user = new User();
 	
-	
-	void setCgv() {
-		cgv = new Seat[SIZE];
-		setSeat();
-	}
-	
-	void setSeat() {
-		for(int i=0; i<SIZE; i++) {
-			cgv[i] = new Seat();
+	void setseat() {
+		seats = new Seat[SIZE];
+		
+		for (int i = 0; i < SIZE; i++) {
+			seats[i] = new Seat();
 		}
 	}
 	
+	Seat setSeats(int idx) {
+		
+		seat.idx = idx;
+		seat.code = log+1;
+		return seat;
+	}
+	// while 실행조건
 	boolean isRun() {
 		return true;
 	}
-	
+	// 영화 좌석 출력
 	void printSeat() {
 		System.out.println("인덱스");
 		for(int i=0; i<SIZE; i++) {
@@ -68,14 +75,14 @@ class Tms{
 		}
 		System.out.println("\n좌석");
 		for(int i=0; i<SIZE; i++) {
-			if(cgv[i].seat)
+			if(seats[i].seat)
 				System.out.print("[O]");
 			else
 				System.out.print("[X]");
 		}
 		System.out.println();
 	}
-	
+	// 메뉴출력
 	void userMenu() {
 		System.out.println("1)회원가입");
 		System.out.println("2)회원탈퇴");
@@ -89,6 +96,7 @@ class Tms{
 		}
 	}
 	
+	// 메뉴선택 예외처리
 	boolean selectCheck(int sel) {
 		if(sel < 0 || sel > 7) {
 			System.err.println("유효하지 않은 메뉴");
@@ -98,6 +106,7 @@ class Tms{
 		return false;
 	}
 	
+	// 선택한 메뉴 실행문
 	void selectRun(int sel) {
 		if(sel == SIGNUP && !checkLog()) {
 			signup();
@@ -116,14 +125,12 @@ class Tms{
 		}
 	}
 	
+	// 로그인 확인
 	boolean checkLog() {
-		if(log == -1) {
-			return false;
-		}else {
-			return true;
-		}
+		return log == -1 ? false : true;
 	}
 	
+	// 회원가입
 	void signup() {
 		String id = inputString("아이디");
 		String password = inputString("비밀번호");
@@ -136,6 +143,7 @@ class Tms{
 		setUserArr(id , password, name);
 	}
 	
+	// 아이디찾기
 	boolean findUserById(String id) {
 		for(int i=0; i<size; i++) {
 			if(id.equals(users[i].id)) {
@@ -146,6 +154,7 @@ class Tms{
 		return false;
 	}
 	
+	// user배열추가
 	void setUserArr(String id, String password, String name) {
 		User[] temp = users;
 		users = new User[size+1];
@@ -161,7 +170,7 @@ class Tms{
 		users[size].name = name;
 		size++;
 	}
-	
+	//회원탈퇴
 	void leave() {
 		String password = inputString("비밀번호");
 		
@@ -173,7 +182,7 @@ class Tms{
 			System.err.println("비밀번호 불일치");
 		
 	}
-	
+	// 비번찾기
 	boolean findUserByPw(String password) {
 		if(users[log].password.equals(password)) {
 			return true;
@@ -181,7 +190,7 @@ class Tms{
 		
 		return false;
 	}
-	
+	// user배열 감소
 	void setUserArr() {
 		User[] temp = users;
 		users = new User[size-1];
@@ -196,6 +205,7 @@ class Tms{
 		size--;
 	}
 	
+	//로그인
 	void login() {
 		String id = inputString("아이디");
 		String password = inputString("비밀번호");
@@ -206,7 +216,7 @@ class Tms{
 		else
 			System.out.printf("%s님 환영합니다.\n",users[log].id);
 	}
-	
+	// 로그인 찾기 log리턴
 	int checkLogin(String id, String pw) {
 		int log = -1;
 		for(int i=0; i<size; i++) {
@@ -217,54 +227,93 @@ class Tms{
 		return log;
 	}
 	
+	// 로그아웃
 	void logout() {
 		log = -1;
 		System.out.println("로그아웃 되셨습니다.");
 	}
 	
+	// 예매
 	void reservation() {
 		printSeat();
 		int input = inputNumber("좌석인덱스");
 		
 		if(checkSeat(input)) {
-			System.out.println("이미 예메된 좌석입니다.");
+			System.out.println("이미 예매된 좌석입니다.");
 		}else {
-			cgv[input].seat = true;
-			cgv[input].seatName = users[log].name;
+			mySeat(input);
 		}
 	}
-	
-	void cancle() {
-		int index = inputNumber("취소할 자리 인덱스");
+	// 예매처리
+	void mySeat(int input) {
+		mySeatVector(input);
 		
-			if(cgv[index].seat = true && cgv[index].seatName == users[log].name) {
-				cgv[index].seat = false;
-				cgv[index].seatName = null;
-				System.out.println("예매 취소되었습니다.");
-			}else {
-				System.err.println("예매하지 않은 자리입니다.");
-			}
-
+		seats[input].seat = true;
 	}
-	
+	// User의 mySeat 배열추가
+	void mySeatVector(int input) {
+		Seat[] temp = users[log].mySeats;
+		
+		users[log].mySeats = new Seat[users[log].seatCnt+1];
+		
+		for(int i=0; i<users[log].seatCnt; i++) {
+			users[log].mySeats[i]= temp[i];
+		}
+		
+		users[log].mySeats[users[log].seatCnt] = setSeats(input);
+		
+		users[log].seatCnt++;
+		seats[input].seat = true;
+		
+	}
+	// 예매취소
+	void cancle() {
+		inquiry();
+		int idx = inputNumber("취소할 자리 인덱스");
+		
+		for(int i=0; i<users[log].seatCnt; i++) {
+			if(users[log].mySeats[i].idx == idx) {
+				mySeatVectorMin(idx);
+				seats[idx].seat = false;
+			}
+		}
+		
+	}
+	// User 예매 mySeat 배열감소
+	void mySeatVectorMin(int idx) {
+		Seat[] temp = users[log].mySeats;
+		users[log].mySeats = new Seat[users[log].seatCnt-1];
+		
+		int cnt = 0;
+		
+		for(int i=0; i<users[log].seatCnt; i++) {
+			if(temp[i].idx != idx) {
+				users[log].mySeats[cnt++] = temp[i]; 
+			}
+		}
+		seats[idx].seat = false;
+		users[log].seatCnt--;
+		
+		
+	}
+	// 예매되있는지 확인
 	boolean checkSeat(int input) {
-		if(cgv[input].seat) {
+		if(seats[input].seat) {
 			return true;
 		}
 		
 		return false;
 	}
 	
+	// 사용자가 예매좌석확인
 	void inquiry() {
-		for(int i=0; i<SIZE; i++) {
-			if(cgv[i].seat != false && cgv[i].seatName.equals(users[log].name)) {
-				System.out.printf("예메좌석 %d 인덱스 자리 \n",i);
-			}
+		for(int i=0; i<users[log].seatCnt; i++) {
+			System.out.printf("%d 번 자리 \n",users[log].mySeats[i].idx);
 		}
 	}
 	
 	
-	
+	// 숫자입력
 	int inputNumber(String message) {
 		int num = -1;
 		
@@ -279,15 +328,17 @@ class Tms{
 		return num;
 	}
 	
+	// 문자열입력
 	String inputString(String message) {
-		System.out.print(message+"입력 : ");
+		System.out.print(message + "입력 : ");
 		String input = sc.next();
 		
 		return input;
 	}
 	
+	// 실행
 	void run() {
-		setCgv();
+		setseat();
 		while(isRun()) {
 			userMenu();
 			int select = inputNumber("메뉴");
