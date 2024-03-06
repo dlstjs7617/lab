@@ -93,14 +93,16 @@ public class Ex11 {
 
 		// 정렬
 		for(int i=0; i<size; i++) {
-			Member member = memberList[i];
+			max = i;
 			for(int j=i; j<size; j++) {
-				if(member.getPoint() < memberList[j].getPoint()) {
-					Member temp = memberList[j];
-					member = memberList[j];
-				
+				if(memberList[max].getPoint() < memberList[j].getPoint()) {
+					max = j;
 				}
 			}
+			
+			Member temp = memberList[i];
+			memberList[i] = memberList[max];
+			memberList[max] = temp;
 		}
 		
 		//출력
