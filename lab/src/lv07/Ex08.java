@@ -34,6 +34,11 @@ class Subject{
 	public Subject(String name){
 		this.name = name;
 	}
+
+	public Subject(String name, int score){
+		this.name = name;
+		this.score = score;
+	}
 	
 	public String getName() {
 		return name;
@@ -67,11 +72,17 @@ class Student{
 	private Subject[] subjects;
 	private int size;
 	private double dvg;
-	
+	private int loadCnt;
 	public Student(String name, int studentId){
 		this.name = name;
 		this.studentId = studentId;
 		this.size = 0;
+	}
+
+	public Student(String name, int studentId, int size){
+		this.name = name;
+		this.studentId = studentId;
+		this.size = size;
 	}
 
 	public String getName() {
@@ -85,6 +96,7 @@ class Student{
 	public int getSize() {
 		return size;
 	}
+	
 	
 	public void addScore(String subject,int score) {
 		int idx = findSubject(subject);
@@ -139,7 +151,25 @@ class Student{
 		return dvg;
 	}
 	
+	public String saveSubject() {
+		String info = "";
+		for(int i=0; i<size; i++) {
+			info += subjects[i].getName() + "/";
+			info += subjects[i].getScore();
+			if(i != size-1)
+				info +="/";
+		}
+		return info;
+	}
 	
+	public void loadSetSize() {
+		subjects = new Subject[size];
+		loadCnt = 0;
+	}
+	
+	public void loadSubject(String name, int score) {
+		subjects[loadCnt++] = new Subject(name, score);
+	}
 	
 	public void studentSubject() {
 		for(int i=0; i<size; i++) {
@@ -537,7 +567,7 @@ class Lms{
 	
 	private void studentSave() {
 		String fileName = "student.txt";
-		String text = "";
+		String text = studentText();
 		file = new File(fileName);
 		
 		
@@ -555,25 +585,110 @@ class Lms{
 		
 	}
 	private String studentText() {
-		// 이름/학번 \n
-		// 
-		String info = "";
+		
+		String info = studentSize + "\n";
 		
 		for(int i=0; i<studentSize; i++) {
 			info += students[i].getName() +"/";
-			info += students[i].getStudentId() +"\n";
+			info += students[i].getStudentId() +"/";
+			info += students[i].getSize()+"/";
+			info += students[i].saveSubject()+ "\n";
 		}
 		
 		return info;
 	}
 	private void subjectSave() {
+		String fileName = "subject.txt";
+		String text = subjectText();
+		file = new File(fileName);
 		
+		try {
+			fw = new FileWriter(file);
+			
+			fw.write(text);
+			
+			fw.close();
+			System.out.println("저장 성공");
+		} catch (Exception e) {
+			System.err.println("저장 실패");
+		}
+	}
+	
+	private String subjectText() {
+		String info = "";
+		
+		for(int i=0; i<subjectSize; i++) {
+			info += subjects[i].getName();
+			if(i != subjectSize-1)
+				info += "/";
+		}
+		
+		return info;
 	}
 
 	private void load() {
-		
+		studentLoad();
+		subjectLoad();
 	}
 	
+	private void studentLoad(){
+		file = new File("student.txt");
+		try {
+			fr = new FileReader(file);
+			br = new BufferedReader(fr);
+			
+			if(!br.ready()) {
+				System.err.println("파일없음");
+				return;
+			}
+			
+			this.studentSize = Integer.parseInt(br.readLine());
+			students = new Student[studentSize];
+			int cnt = 0;
+			while(br.ready()) {
+				String[] info = br.readLine().split("/");
+				System.out.println(info[0]);
+				students[cnt] = new Student(info[0],Integer.parseInt(info[1]) , Integer.parseInt(info[2]));
+				students[cnt].loadSetSize();
+				
+				for(int j=3; j<info.length; j+=2) {
+					students[cnt].loadSubject(info[j], Integer.parseInt(info[j+1]));
+				}
+				
+				cnt++;
+			}
+			
+			
+			br.close();
+			fr.close();
+			System.out.println("불러오기 성공");
+		} catch (IOException e) {
+			System.err.println("불러오기 실패");
+			e.printStackTrace();
+		}
+	}
+	
+	private void subjectLoad() {
+		file = new File("subject.txt");
+		try {
+			fr = new FileReader(file);
+			br = new BufferedReader(fr);
+			
+			String[] info = br.readLine().split("/");
+			this.subjectSize = info.length;
+			subjects = new Subject[subjectSize];
+			for(int i=0; i<subjectSize; i++) {
+				subjects[i] = new Subject(info[i]);
+			}
+			
+			br.close();
+			fr.close();
+			System.out.println("불러오기 성공");
+		} catch (Exception e) {
+			System.err.println("불러오기 실패");
+			e.printStackTrace();
+		}
+	}
 	
 	public void run() {
 		
