@@ -57,7 +57,7 @@ class Lotto {
 				cnt = 0;
 			
 			if(cnt == GOAL)
-				this.isGoal = true;
+				isGoal = true;
 		}
 		
 		setIsGoal(isGoal);
