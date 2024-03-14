@@ -2,7 +2,7 @@ package lv08;
 
 import java.util.Scanner;
 
-class MyArrayList{
+class MyArrayList2{
 	
 	private int size;
 	private int[] list;
@@ -107,7 +107,7 @@ public class Ex04 {
 		
 		Scanner sc = new Scanner(System.in);
 		
-		MyArrayList list = new MyArrayList();
+		MyArrayList2 list = new MyArrayList2();
 		
 		while(true) {
 			System.out.println(list);
