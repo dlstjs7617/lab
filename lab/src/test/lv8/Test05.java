@@ -3,8 +3,8 @@ package test.lv8;
 import java.util.Vector;
 
 //시작 20:20
-//종료 00:00
-//소요 00:00
+//종료 21:26
+//소요 01:06
 class Member {
 	private int code;
 	private String name;
@@ -24,13 +24,47 @@ class Member {
 		this.city = city;
 	}
 	
-}
-
-class Sale{
+	public int getCode() {
+		return code;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%d        %s", code, name);
+	}
 	
 }
 
+class Sale{
+	private int code;
+	private int saleDay;
+	private int originPrice;
+	private int ea;
+	private int price;
+	private String goodsCode;
+	private String day;
+	
+	public Sale(int code, int saleDay, int originPrice, int ea, int price, String goodsCode, String day) {
+		this.code = code ;
+		this.saleDay = saleDay;
+		this.originPrice = originPrice;
+		this.ea = ea;
+		this.price = price;
+		this.goodsCode = goodsCode;
+		this.day = day;
+	}
+	
+	public int getCode() {
+		return code;
+	}
+	
+	public int getPrice() {
+		return price;
+	}
+}
+
 class Crm {
+	
 	private Vector<Member> memberList;
 	private Vector<Sale> moneyList;
 	
@@ -62,9 +96,60 @@ class Crm {
 		moneyList.add(new Sale(100004, 20240009, 600, 1, 600, "A006", "20240104"));
 		moneyList.add(new Sale(100004, 20240010, 3000, 1, 3000, "A007", "20240106"));
 	}
+	private int totalMoney(int index) {
+		int totalMoney = 0;
+		int code = memberList.get(index).getCode();
+		for(int i=0; i<moneyList.size(); i++) {
+			if(moneyList.get(i).getCode() == code)
+				totalMoney += moneyList.get(i).getPrice();
+		}
+		
+		return totalMoney;
+	}
+	
+	private void sort() {
+		for(int i=0; i<memberList.size(); i++) {
+			int money = totalMoney(i);
+			
+			Member mem = memberList.get(i);
+			int max = i;
+			
+			for(int j=i; j<memberList.size(); j++) {
+				int temp = totalMoney(j);
+				if(money < temp) {
+					max = j;
+					money = temp;
+				}
+				
+			}
+			
+			Member temp = memberList.get(max);
+			
+			memberList.set(i, temp);
+			memberList.set(max, mem);
+			
+		}
+		
+	}
+	
+	private void print() {
+		for(int i=0; i<memberList.size(); i++) {
+			int money = totalMoney(i);
+			
+			if(money == 0)
+				continue;
+			System.out.print(memberList.get(i) + "        " + money + "\n");
+			System.out.println("---------------------------------");
+		}
+	}
+
+	private void setCrm() {
+		sort();
+		print();
+	}
 	
 	public void calculatePurchaseRankings() {
-		
+		setCrm();
 	}
 }
 
